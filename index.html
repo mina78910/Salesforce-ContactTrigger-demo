@@ -144,16 +144,150 @@
     .icon-title { font-weight: 800; color: #16325c; }
     .icon-note { font-size: 12px; color: var(--muted); }
 
-    .middle-spacer {
-      width: 100%;
+    .flow-stage {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: min(760px, 100%);
       height: 100%;
+    }
+
+    .source-user {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      display: grid;
+      place-items: center;
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #ffffff 0%, #fff7ed 100%);
+      border: 1px solid #f4c48a;
+      box-shadow: var(--card-shadow);
+      color: #8a4b00;
+      font-size: 38px;
+      transform: translateY(-50%);
+    }
+
+    .source-user::after {
+      content: '';
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #2e844a;
+      box-shadow: 0 0 0 6px rgba(46, 132, 74, 0.12);
+      transform: translateY(-50%);
+    }
+
+    .data-loader {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 220px;
+      min-height: 112px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #f3f7fc 100%);
+      border: 1px solid #c9d7e8;
+      border-top: 5px solid #6f42c1;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+    }
+
+    .data-loader::before {
+      content: '';
+      position: absolute;
+      inset: 12px 22px auto;
+      height: 16px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #eef4fb, #dbe8f8);
+      box-shadow: inset 0 1px 3px rgba(22, 50, 92, 0.14);
+    }
+
+    .data-loader::after {
+      content: '';
+      position: absolute;
+      top: 53px;
+      left: 50%;
+      width: 92px;
+      height: 12px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #2e844a, #45c65a);
+      box-shadow: 0 0 0 5px rgba(46, 132, 74, 0.12);
+      transform: translateX(-50%);
+      animation: loaderSlotPulse 2.8s ease-in-out infinite;
+    }
+
+    .data-loader-title {
+      position: relative;
+      z-index: 1;
+      margin-top: 50px;
+      color: #16325c;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .csv-file {
+      position: absolute;
+      left: 112px;
+      top: calc(50% - 35px);
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      width: 62px;
+      height: 70px;
+      color: #2e844a;
+      border: 2px solid #2e844a;
+      border-radius: 8px 14px 8px 8px;
+      background: linear-gradient(180deg, #ffffff 0%, #effaf3 100%);
+      box-shadow: 0 12px 22px rgba(22, 50, 92, 0.18);
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      animation: csvToLoader 2.8s cubic-bezier(.45, 0, .2, 1) infinite;
+    }
+
+    .csv-file::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      border-top: 18px solid #b9e6cc;
+      border-left: 18px solid transparent;
+      border-radius: 0 12px 0 0;
+    }
+
+    .flow-line {
+      position: absolute;
+      left: 115px;
+      right: 165px;
+      top: 50%;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(21, 137, 238, 0.35), transparent);
+      transform: translateY(-50%);
+    }
+
+    @keyframes csvToLoader {
+      0%, 15% { opacity: 0; transform: translateX(0) scale(0.82); }
+      25% { opacity: 1; transform: translateX(0) scale(1); }
+      68% { opacity: 1; transform: translateX(220px) scale(1); }
+      82%, 100% { opacity: 0; transform: translateX(290px) scale(0.42); }
+    }
+
+    @keyframes loaderSlotPulse {
+      0%, 55%, 100% { box-shadow: 0 0 0 5px rgba(46, 132, 74, 0.12); }
+      72% { box-shadow: 0 0 0 12px rgba(46, 132, 74, 0.22); }
     }
 
     .objects-wrapper {
       display: grid;
-      grid-template-columns: minmax(420px, 1fr) minmax(320px, 0.82fr);
-      gap: 26px;
-      width: min(1040px, 100%);
+      grid-template-columns: minmax(360px, 1fr) minmax(300px, 0.78fr);
+      gap: 22px;
+      width: min(980px, 100%);
       height: 100%;
       align-items: stretch;
     }
@@ -164,7 +298,7 @@
       min-height: 0;
       flex-direction: column;
       overflow: hidden;
-      padding-top: 20px;
+      padding-top: 18px;
       border-radius: 48% / 22px;
       background: linear-gradient(90deg, #f7f9fc 0%, #ffffff 18%, #ffffff 72%, #e8f1fb 100%);
       border: 1px solid #b8c6d9;
@@ -176,7 +310,7 @@
       position: absolute;
       left: -1px;
       right: -1px;
-      height: 42px;
+      height: 38px;
       border: 1px solid #b8c6d9;
       border-radius: 50%;
       pointer-events: none;
@@ -188,7 +322,7 @@
       box-shadow: inset 0 8px 14px rgba(255, 255, 255, 0.72), 0 5px 9px rgba(22, 50, 92, 0.12);
     }
     .object-card::after {
-      bottom: -22px;
+      bottom: -20px;
       z-index: 0;
       background: linear-gradient(180deg, rgba(255,255,255,0.28), rgba(11, 92, 171, 0.14));
       box-shadow: inset 0 -7px 12px rgba(22, 50, 92, 0.11);
@@ -204,7 +338,7 @@
       align-items: center;
       justify-content: space-between;
       margin: 0 16px;
-      padding: 8px 13px;
+      padding: 7px 12px;
       color: #fff;
       border-radius: 999px;
       background: linear-gradient(135deg, #16325c 0%, var(--salesforce-blue) 100%);
@@ -231,25 +365,26 @@
     .records {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
-      gap: 6px;
-      padding: 9px 12px;
-      overflow: auto;
+      grid-template-rows: repeat(10, minmax(0, 1fr));
+      gap: 3px;
+      padding: 7px 10px;
+      overflow: hidden;
     }
 
     .record {
-      padding: 5px 9px;
+      padding: 2px 9px;
       border: 1px solid #d8dde6;
       border-left: 4px solid var(--salesforce-blue);
-      border-radius: 10px;
+      border-radius: 8px;
       background: linear-gradient(180deg, #fff 0%, #f7f9fc 100%);
       box-shadow: 0 2px 7px rgba(22, 50, 92, 0.07);
-      font-size: 12px;
+      font-size: 11px;
     }
     .record strong {
       display: block;
-      margin-bottom: 1px;
       color: #16325c;
-      font-size: 12px;
+      font-size: 11px;
+      line-height: 1.08;
     }
     .record span { color: var(--muted); }
 
@@ -257,8 +392,8 @@
       position: relative;
       z-index: 1;
       flex: 1;
-      margin: 0 16px 18px;
-      padding-top: 8px;
+      margin: 0 16px 16px;
+      padding-top: 6px;
       background: linear-gradient(90deg, rgba(255,255,255,0.24), rgba(255,255,255,0.68) 45%, rgba(11,92,171,0.07));
     }
     .contacts .object-body {
@@ -291,7 +426,14 @@
 
     <section class="tier tier-middle" aria-labelledby="middle-label">
       <div id="middle-label" class="tier-label">中段：処理エリア</div>
-      <div class="middle-spacer" aria-hidden="true"></div>
+      <div class="flow-stage" aria-label="ユーザーがCSVをデータローダーに投入するアニメーション">
+        <div class="source-user" aria-hidden="true">🧑‍💼</div>
+        <div class="flow-line" aria-hidden="true"></div>
+        <div class="csv-file" aria-hidden="true">CSV</div>
+        <article class="data-loader" aria-label="データローダー">
+          <div class="data-loader-title">Data Loader</div>
+        </article>
+      </div>
     </section>
 
     <section class="tier tier-bottom" aria-labelledby="bottom-label">
@@ -303,16 +445,16 @@
             <div class="record-count">10 records</div>
           </header>
           <div class="object-body records">
-            <div class="record"><strong>Acme株式会社</strong><span>Account-001</span></div>
-            <div class="record"><strong>グローバル商事</strong><span>Account-002</span></div>
-            <div class="record"><strong>東京テック</strong><span>Account-003</span></div>
-            <div class="record"><strong>北斗システム</strong><span>Account-004</span></div>
-            <div class="record"><strong>サクラ食品</strong><span>Account-005</span></div>
-            <div class="record"><strong>Blue Ocean合同会社</strong><span>Account-006</span></div>
-            <div class="record"><strong>Future Works</strong><span>Account-007</span></div>
-            <div class="record"><strong>山吹物流</strong><span>Account-008</span></div>
-            <div class="record"><strong>Cloud Nine</strong><span>Account-009</span></div>
-            <div class="record"><strong>南風デザイン</strong><span>Account-010</span></div>
+            <div class="record"><strong>Acme株式会社</strong></div>
+            <div class="record"><strong>グローバル商事</strong></div>
+            <div class="record"><strong>東京テック</strong></div>
+            <div class="record"><strong>北斗システム</strong></div>
+            <div class="record"><strong>サクラ食品</strong></div>
+            <div class="record"><strong>Blue Ocean合同会社</strong></div>
+            <div class="record"><strong>Future Works</strong></div>
+            <div class="record"><strong>山吹物流</strong></div>
+            <div class="record"><strong>Cloud Nine</strong></div>
+            <div class="record"><strong>南風デザイン</strong></div>
           </div>
         </article>
 
