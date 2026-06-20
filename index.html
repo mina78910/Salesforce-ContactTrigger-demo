@@ -259,82 +259,52 @@
     }
 
 
-    .contact-batch {
+    .contact-drop-zone {
       position: absolute;
-      left: calc(50% - 56px);
-      top: calc(16.666% + 18px);
-      z-index: 6;
-      display: grid;
-      gap: 4px;
-      width: 112px;
-      opacity: 0;
+      top: -182px;
+      left: 50%;
+      z-index: 8;
+      width: calc(100% - 42px);
+      max-width: 300px;
       pointer-events: none;
-      animation: batchToContact 5.6s cubic-bezier(.42, 0, .18, 1) infinite;
+      transform: translateX(-50%);
+      animation: contactDropList 5.6s cubic-bezier(.42, 0, .18, 1) infinite;
     }
 
-    .batch-sheet {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 20px;
-      padding: 0 8px;
-      border: 1px solid #8bd3a7;
-      border-left: 4px solid #2e844a;
-      border-radius: 7px;
+    .contact-drop-zone .record {
+      margin-bottom: 3px;
+      border-left-color: #2e844a;
       background: linear-gradient(180deg, #ffffff 0%, #effaf3 100%);
-      box-shadow: 0 5px 10px rgba(22, 50, 92, 0.12);
-      color: #1f5f3a;
-      font-size: 9px;
-      font-weight: 800;
     }
 
-    .batch-sheet:nth-child(2) { transform: translateX(6px); }
-    .batch-sheet:nth-child(3) { transform: translateX(12px); }
-
-    .saved-contact-group {
-      align-self: center;
-      justify-self: center;
-      width: min(210px, 74%);
-      padding: 12px 14px;
-      border: 1px solid #8bd3a7;
-      border-left: 6px solid #2e844a;
-      border-radius: 12px;
-      background: linear-gradient(180deg, #ffffff 0%, #effaf3 100%);
-      box-shadow: 0 8px 18px rgba(22, 50, 92, 0.12);
-      color: #1f5f3a;
-      text-align: center;
+    .contact-records {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: repeat(15, minmax(0, 1fr));
+      gap: 2px;
+      padding: 5px 9px;
+      overflow: hidden;
       opacity: 0;
-      transform: translateY(8px) scale(.96);
-      animation: savedGroupAppear 5.6s ease-in-out infinite;
+      animation: contactStoredRecords 5.6s ease-in-out infinite;
     }
 
-    .saved-contact-group strong {
-      display: block;
-      font-size: 13px;
-      line-height: 1.2;
+    .contact-records .record {
+      border-left-color: #2e844a;
+      background: linear-gradient(180deg, #ffffff 0%, #effaf3 100%);
     }
 
-    .saved-contact-group span {
-      display: block;
-      margin-top: 3px;
-      font-size: 11px;
-      font-weight: 800;
+    @keyframes contactDropList {
+      0%, 50% { opacity: 0; transform: translate(-50%, -12px) scale(.98); }
+      58% { opacity: 1; transform: translate(-50%, -12px) scale(.98); }
+      78% { opacity: 1; transform: translate(-50%, 206px) scale(.98); }
+      88%, 100% { opacity: 0; transform: translate(-50%, 230px) scale(.98); }
     }
 
-    @keyframes batchToContact {
-      0%, 52% { opacity: 0; transform: translate(0, 0) scale(.82); }
-      58% { opacity: 1; transform: translate(0, 0) scale(1); }
-      78% { opacity: 1; transform: translate(31vw, 54vh) scale(1); }
-      88%, 100% { opacity: 0; transform: translate(34vw, 58vh) scale(.62); }
+    @keyframes contactStoredRecords {
+      0%, 78% { opacity: 0; }
+      86%, 96% { opacity: 1; }
+      100% { opacity: 0; }
     }
-
-    @keyframes savedGroupAppear {
-      0%, 78% { opacity: 0; transform: translateY(8px) scale(.96); }
-      86%, 96% { opacity: 1; transform: translateY(0) scale(1); }
-      100% { opacity: 0; transform: translateY(0) scale(1); }
-    }
-
 
     .objects-wrapper {
       display: grid;
@@ -379,6 +349,9 @@
       z-index: 0;
       background: linear-gradient(180deg, rgba(255,255,255,0.28), rgba(11, 92, 171, 0.14));
       box-shadow: inset 0 -7px 12px rgba(22, 50, 92, 0.11);
+    }
+    .object-card.contacts {
+      overflow: visible;
     }
     .object-card.contacts::before {
       background: radial-gradient(ellipse at center, #ffffff 0%, #dff4e8 62%, #b9e6cc 100%);
@@ -454,7 +427,7 @@
     }
     .contacts-body {
       display: grid;
-      place-items: center;
+      place-items: stretch;
     }
   </style>
 </head>
@@ -465,11 +438,6 @@
   </header>
 
   <main class="architecture-container" aria-label="Salesforceデモの3階層画面">
-    <div class="contact-batch" aria-hidden="true">
-      <div class="batch-sheet"><span>Contact</span><span>×5</span></div>
-      <div class="batch-sheet"><span>Contact</span><span>×5</span></div>
-      <div class="batch-sheet"><span>Contact</span><span>×5</span></div>
-    </div>
     <section class="tier tier-top" aria-labelledby="top-label">
       <div id="top-label" class="tier-label">上段：CSV投入</div>
       <div class="flow-stage" aria-label="ユーザーがCSVをデータローダーに投入するアニメーション">
@@ -514,8 +482,39 @@
             <div class="object-name">👤 取引先責任者オブジェクト</div>
             <div class="record-count">15 records</div>
           </header>
-          <div class="object-body contacts-body" aria-hidden="true">
-            <div class="saved-contact-group"><strong>取引先責任者</strong><span>15 records</span></div>
+          <div class="contact-drop-zone" aria-hidden="true">
+            <div class="record"><strong>高橋 一郎</strong></div>
+            <div class="record"><strong>佐藤 花子</strong></div>
+            <div class="record"><strong>鈴木 太郎</strong></div>
+            <div class="record"><strong>田中 美咲</strong></div>
+            <div class="record"><strong>伊藤 健</strong></div>
+            <div class="record"><strong>渡辺 葵</strong></div>
+            <div class="record"><strong>山本 大輔</strong></div>
+            <div class="record"><strong>中村 優子</strong></div>
+            <div class="record"><strong>小林 亮</strong></div>
+            <div class="record"><strong>加藤 真央</strong></div>
+            <div class="record"><strong>吉田 翔</strong></div>
+            <div class="record"><strong>山田 結衣</strong></div>
+            <div class="record"><strong>佐々木 蓮</strong></div>
+            <div class="record"><strong>松本 陽菜</strong></div>
+            <div class="record"><strong>井上 直樹</strong></div>
+          </div>
+          <div class="object-body contacts-body contact-records" aria-hidden="true">
+              <div class="record"><strong>高橋 一郎</strong></div>
+              <div class="record"><strong>佐藤 花子</strong></div>
+              <div class="record"><strong>鈴木 太郎</strong></div>
+              <div class="record"><strong>田中 美咲</strong></div>
+              <div class="record"><strong>伊藤 健</strong></div>
+              <div class="record"><strong>渡辺 葵</strong></div>
+              <div class="record"><strong>山本 大輔</strong></div>
+              <div class="record"><strong>中村 優子</strong></div>
+              <div class="record"><strong>小林 亮</strong></div>
+              <div class="record"><strong>加藤 真央</strong></div>
+              <div class="record"><strong>吉田 翔</strong></div>
+              <div class="record"><strong>山田 結衣</strong></div>
+              <div class="record"><strong>佐々木 蓮</strong></div>
+              <div class="record"><strong>松本 陽菜</strong></div>
+              <div class="record"><strong>井上 直樹</strong></div>
           </div>
         </article>
       </div>
