@@ -1,1 +1,303 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Salesforce 取引先・取引先責任者 デモ画面</title>
+  <style>
+    :root {
+      --salesforce-blue: #1589ee;
+      --salesforce-dark-blue: #0b5cab;
+      --success-green: #04844b;
+      --text: #080707;
+      --muted: #706e6b;
+      --line: rgba(112, 110, 107, 0.45);
+      --card-shadow: 0 14px 30px rgba(22, 50, 92, 0.14), 0 2px 6px rgba(8, 7, 7, 0.06);
+    }
 
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top left, #ffffff 0, #eef4fb 34%, #dfe8f3 100%);
+      overflow: hidden;
+    }
+
+    .header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 22px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--salesforce-dark-blue) 0%, var(--salesforce-blue) 52%, #38a3ff 100%);
+      box-shadow: 0 10px 28px rgba(8, 7, 7, 0.18);
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+    }
+
+    .badge {
+      padding: 6px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.2);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .architecture-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 54px);
+      overflow: hidden;
+    }
+
+    .architecture-container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: #eef2f6;
+      background-image: linear-gradient(rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.12)), radial-gradient(#d1dbe8 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .tier {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 42px 32px 28px;
+      border-bottom: 2px dashed var(--line);
+    }
+
+    .tier-label {
+      position: absolute;
+      top: 12px;
+      left: 20px;
+      z-index: 2;
+      padding: 5px 13px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(216, 221, 230, 0.9);
+      border-radius: 999px;
+      box-shadow: 0 6px 18px rgba(22, 50, 92, 0.12);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .tier-top { flex: 1.1; }
+    .tier-middle { flex: 0.72; }
+    .tier-bottom {
+      flex: 1.55;
+      border-bottom: none;
+      align-items: stretch;
+    }
+
+    .actor-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 56px;
+    }
+
+    .icon-card {
+      width: 180px;
+      min-height: 150px;
+      display: grid;
+      place-items: center;
+      gap: 8px;
+      padding: 18px;
+      border-radius: 18px;
+      background: #fff;
+      border-top: 5px solid var(--salesforce-blue);
+      box-shadow: var(--card-shadow);
+      text-align: center;
+    }
+
+    .icon-card.person { border-top-color: #e28705; }
+    .icon {
+      font-size: 58px;
+      line-height: 1;
+      filter: drop-shadow(0 8px 8px rgba(22, 50, 92, 0.12));
+    }
+    .icon-title { font-weight: 800; color: #16325c; }
+    .icon-note { font-size: 12px; color: var(--muted); }
+
+    .empty-message {
+      padding: 16px 28px;
+      border: 1px dashed rgba(112, 110, 107, 0.35);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.56);
+      color: #9a9895;
+      font-weight: 700;
+    }
+
+    .objects-wrapper {
+      display: grid;
+      grid-template-columns: minmax(420px, 1fr) minmax(320px, 0.82fr);
+      gap: 26px;
+      width: min(1120px, 100%);
+      align-items: stretch;
+    }
+
+    .object-card {
+      display: flex;
+      min-height: 0;
+      flex-direction: column;
+      overflow: hidden;
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid #d8dde6;
+      box-shadow: var(--card-shadow);
+    }
+
+    .object-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 13px 16px;
+      color: #fff;
+      background: linear-gradient(135deg, #16325c 0%, var(--salesforce-blue) 100%);
+    }
+    .object-card.contacts .object-header {
+      background: linear-gradient(135deg, #2e844a 0%, var(--success-green) 100%);
+    }
+
+    .object-name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+    }
+    .record-count {
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.22);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .records {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+      padding: 14px;
+      overflow: auto;
+    }
+
+    .record {
+      padding: 9px 10px;
+      border: 1px solid #d8dde6;
+      border-left: 4px solid var(--salesforce-blue);
+      border-radius: 10px;
+      background: linear-gradient(180deg, #fff 0%, #f7f9fc 100%);
+      box-shadow: 0 2px 7px rgba(22, 50, 92, 0.07);
+      font-size: 12px;
+    }
+    .record strong {
+      display: block;
+      margin-bottom: 3px;
+      color: #16325c;
+      font-size: 13px;
+    }
+    .record span { color: var(--muted); }
+
+    .empty-object {
+      display: grid;
+      flex: 1;
+      place-items: center;
+      padding: 28px;
+      color: var(--muted);
+      text-align: center;
+      background: repeating-linear-gradient(135deg, #ffffff, #ffffff 13px, #f6f8fb 13px, #f6f8fb 26px);
+    }
+    .empty-object-icon { font-size: 54px; opacity: 0.42; }
+    .empty-object-title { margin-top: 8px; font-size: 18px; font-weight: 800; color: #3e3e3c; }
+    .empty-object-note { margin-top: 6px; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-title">☁️ Salesforce オブジェクト状態図</div>
+    <div class="badge">初期状態</div>
+  </header>
+
+  <main class="architecture-container" aria-label="Salesforceデモの3階層画面">
+    <section class="tier tier-top" aria-labelledby="top-label">
+      <div id="top-label" class="tier-label">上段：利用者・操作端末</div>
+      <div class="actor-area">
+        <article class="icon-card pc" aria-label="PC">
+          <div class="icon" aria-hidden="true">💻</div>
+          <div class="icon-title">PC</div>
+          <div class="icon-note">Salesforce画面を操作</div>
+        </article>
+        <article class="icon-card person" aria-label="人">
+          <div class="icon" aria-hidden="true">🧑‍💼</div>
+          <div class="icon-title">人</div>
+          <div class="icon-note">ユーザー</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="tier tier-middle" aria-labelledby="middle-label">
+      <div id="middle-label" class="tier-label">中段：処理エリア</div>
+      <div class="empty-message">いったん何も配置しない</div>
+    </section>
+
+    <section class="tier tier-bottom" aria-labelledby="bottom-label">
+      <div id="bottom-label" class="tier-label">下段：Salesforceオブジェクト</div>
+      <div class="objects-wrapper">
+        <article class="object-card accounts" aria-label="取引先オブジェクト">
+          <header class="object-header">
+            <div class="object-name">🏢 取引先オブジェクト</div>
+            <div class="record-count">10 records</div>
+          </header>
+          <div class="records">
+            <div class="record"><strong>Acme株式会社</strong><span>Account-001</span></div>
+            <div class="record"><strong>グローバル商事</strong><span>Account-002</span></div>
+            <div class="record"><strong>東京テック</strong><span>Account-003</span></div>
+            <div class="record"><strong>北斗システム</strong><span>Account-004</span></div>
+            <div class="record"><strong>サクラ食品</strong><span>Account-005</span></div>
+            <div class="record"><strong>Blue Ocean合同会社</strong><span>Account-006</span></div>
+            <div class="record"><strong>Future Works</strong><span>Account-007</span></div>
+            <div class="record"><strong>山吹物流</strong><span>Account-008</span></div>
+            <div class="record"><strong>Cloud Nine</strong><span>Account-009</span></div>
+            <div class="record"><strong>南風デザイン</strong><span>Account-010</span></div>
+          </div>
+        </article>
+
+        <article class="object-card contacts" aria-label="取引先責任者オブジェクト">
+          <header class="object-header">
+            <div class="object-name">👤 取引先責任者オブジェクト</div>
+            <div class="record-count">0 records</div>
+          </header>
+          <div class="empty-object">
+            <div>
+              <div class="empty-object-icon" aria-hidden="true">∅</div>
+              <div class="empty-object-title">まだ何も入っていない</div>
+              <div class="empty-object-note">Contactレコードは未作成です</div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
