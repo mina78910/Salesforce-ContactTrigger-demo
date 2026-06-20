@@ -53,7 +53,7 @@
       border: 1px solid rgba(255, 255, 255, 0.5);
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.2);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
     }
 
@@ -80,10 +80,12 @@
       position: relative;
       z-index: 1;
       display: flex;
+      flex: 1 1 0;
+      min-height: 0;
       align-items: center;
       justify-content: center;
       width: 100%;
-      padding: 42px 32px 28px;
+      padding: 38px 32px 22px;
       border-bottom: 2px dashed var(--line);
     }
 
@@ -102,12 +104,14 @@
       font-weight: 700;
     }
 
-    .tier-top { flex: 1.1; }
-    .tier-middle { flex: 0.72; }
+    .tier-top,
+    .tier-middle,
     .tier-bottom {
-      flex: 1.55;
+      flex: 1 1 0;
+    }
+    .tier-bottom {
       border-bottom: none;
-      align-items: stretch;
+      align-items: center;
     }
 
     .actor-area {
@@ -118,8 +122,8 @@
     }
 
     .icon-card {
-      width: 180px;
-      min-height: 150px;
+      width: 168px;
+      min-height: 128px;
       display: grid;
       place-items: center;
       gap: 8px;
@@ -133,7 +137,7 @@
 
     .icon-card.person { border-top-color: #e28705; }
     .icon {
-      font-size: 58px;
+      font-size: 50px;
       line-height: 1;
       filter: drop-shadow(0 8px 8px rgba(22, 50, 92, 0.12));
     }
@@ -149,7 +153,8 @@
       display: grid;
       grid-template-columns: minmax(420px, 1fr) minmax(320px, 0.82fr);
       gap: 26px;
-      width: min(1120px, 100%);
+      width: min(1040px, 100%);
+      height: 100%;
       align-items: stretch;
     }
 
@@ -159,7 +164,7 @@
       min-height: 0;
       flex-direction: column;
       overflow: hidden;
-      padding-top: 26px;
+      padding-top: 20px;
       border-radius: 48% / 22px;
       background: linear-gradient(90deg, #f7f9fc 0%, #ffffff 18%, #ffffff 72%, #e8f1fb 100%);
       border: 1px solid #b8c6d9;
@@ -171,7 +176,7 @@
       position: absolute;
       left: -1px;
       right: -1px;
-      height: 52px;
+      height: 42px;
       border: 1px solid #b8c6d9;
       border-radius: 50%;
       pointer-events: none;
@@ -183,7 +188,7 @@
       box-shadow: inset 0 8px 14px rgba(255, 255, 255, 0.72), 0 5px 9px rgba(22, 50, 92, 0.12);
     }
     .object-card::after {
-      bottom: -27px;
+      bottom: -22px;
       z-index: 0;
       background: linear-gradient(180deg, rgba(255,255,255,0.28), rgba(11, 92, 171, 0.14));
       box-shadow: inset 0 -7px 12px rgba(22, 50, 92, 0.11);
@@ -198,8 +203,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin: 2px 18px 0;
-      padding: 10px 14px;
+      margin: 0 16px;
+      padding: 8px 13px;
       color: #fff;
       border-radius: 999px;
       background: linear-gradient(135deg, #16325c 0%, var(--salesforce-blue) 100%);
@@ -226,13 +231,13 @@
     .records {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
-      gap: 9px;
-      padding: 14px;
+      gap: 6px;
+      padding: 9px 12px;
       overflow: auto;
     }
 
     .record {
-      padding: 9px 10px;
+      padding: 5px 9px;
       border: 1px solid #d8dde6;
       border-left: 4px solid var(--salesforce-blue);
       border-radius: 10px;
@@ -242,9 +247,9 @@
     }
     .record strong {
       display: block;
-      margin-bottom: 3px;
+      margin-bottom: 1px;
       color: #16325c;
-      font-size: 13px;
+      font-size: 12px;
     }
     .record span { color: var(--muted); }
 
@@ -252,8 +257,8 @@
       position: relative;
       z-index: 1;
       flex: 1;
-      margin: 0 18px 22px;
-      padding-top: 12px;
+      margin: 0 16px 18px;
+      padding-top: 8px;
       background: linear-gradient(90deg, rgba(255,255,255,0.24), rgba(255,255,255,0.68) 45%, rgba(11,92,171,0.07));
     }
     .contacts .object-body {
