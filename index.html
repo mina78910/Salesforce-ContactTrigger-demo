@@ -1,1 +1,787 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Salesforce 取引先・取引先責任者 デモ画面</title>
+  <style>
+    :root {
+      --salesforce-blue: #1589ee;
+      --salesforce-dark-blue: #0b5cab;
+      --success-green: #04844b;
+      --text: #080707;
+      --muted: #706e6b;
+      --line: rgba(112, 110, 107, 0.45);
+      --card-shadow: 0 14px 30px rgba(22, 50, 92, 0.14), 0 2px 6px rgba(8, 7, 7, 0.06);
+    }
 
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(circle at top left, #ffffff 0, #eef4fb 34%, #dfe8f3 100%);
+      overflow: hidden;
+    }
+
+    .header {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 22px;
+      color: #fff;
+      background: linear-gradient(135deg, var(--salesforce-dark-blue) 0%, var(--salesforce-blue) 52%, #38a3ff 100%);
+      box-shadow: 0 10px 28px rgba(8, 7, 7, 0.18);
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+    }
+
+    .badge {
+      padding: 6px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.2);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .architecture-container {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 54px);
+      overflow: hidden;
+    }
+
+    .architecture-container::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background: #eef2f6;
+      background-image: linear-gradient(rgba(255, 255, 255, 0.58), rgba(255, 255, 255, 0.12)), radial-gradient(#d1dbe8 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .tier {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex: 1 1 0;
+      min-height: 0;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 38px 32px 22px;
+      border-bottom: 2px dashed var(--line);
+    }
+
+    .tier-label {
+      position: absolute;
+      top: 12px;
+      left: 20px;
+      z-index: 2;
+      padding: 5px 13px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(216, 221, 230, 0.9);
+      border-radius: 999px;
+      box-shadow: 0 6px 18px rgba(22, 50, 92, 0.12);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .tier-top,
+    .tier-middle,
+    .tier-bottom {
+      flex: 1 1 0;
+    }
+    .tier-bottom {
+      border-bottom: none;
+      align-items: center;
+    }
+
+    .middle-spacer {
+      width: 100%;
+      height: 100%;
+    }
+
+    .flow-stage {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: min(760px, 100%);
+      height: 100%;
+    }
+
+    .source-user {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      display: grid;
+      place-items: center;
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #ffffff 0%, #fff7ed 100%);
+      border: 1px solid #f4c48a;
+      box-shadow: var(--card-shadow);
+      color: #8a4b00;
+      font-size: 38px;
+      transform: translateY(-50%);
+    }
+
+    .source-user::after {
+      content: '';
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #2e844a;
+      box-shadow: 0 0 0 6px rgba(46, 132, 74, 0.12);
+      transform: translateY(-50%);
+    }
+
+    .data-loader {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 220px;
+      min-height: 112px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, #ffffff 0%, #f3f7fc 100%);
+      border: 1px solid #c9d7e8;
+      border-top: 5px solid #6f42c1;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+    }
+
+    .data-loader::before {
+      content: '';
+      position: absolute;
+      inset: 12px 22px auto;
+      height: 16px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #eef4fb, #dbe8f8);
+      box-shadow: inset 0 1px 3px rgba(22, 50, 92, 0.14);
+    }
+
+    .data-loader::after {
+      content: '';
+      position: absolute;
+      top: 53px;
+      left: 50%;
+      width: 92px;
+      height: 12px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #2e844a, #45c65a);
+      box-shadow: 0 0 0 5px rgba(46, 132, 74, 0.12);
+      transform: translateX(-50%);
+      animation: loaderSlotPulse 9s ease-in-out infinite;
+    }
+
+    .data-loader-title {
+      position: relative;
+      z-index: 1;
+      margin-top: 50px;
+      color: #16325c;
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .csv-file {
+      position: absolute;
+      left: 112px;
+      top: calc(50% - 35px);
+      z-index: 3;
+      display: grid;
+      place-items: center;
+      width: 62px;
+      height: 70px;
+      color: #2e844a;
+      border: 2px solid #2e844a;
+      border-radius: 8px 14px 8px 8px;
+      background: linear-gradient(180deg, #ffffff 0%, #effaf3 100%);
+      box-shadow: 0 12px 22px rgba(22, 50, 92, 0.18);
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      animation: csvToLoader 9s cubic-bezier(.45, 0, .2, 1) infinite;
+    }
+
+    .csv-file::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      border-top: 18px solid #b9e6cc;
+      border-left: 18px solid transparent;
+      border-radius: 0 12px 0 0;
+    }
+
+    .flow-line {
+      position: absolute;
+      left: 115px;
+      right: 165px;
+      top: 50%;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(21, 137, 238, 0.35), transparent);
+      transform: translateY(-50%);
+    }
+
+    @keyframes csvToLoader {
+      0%, 5% { opacity: 0; transform: translateX(0) scale(0.82); }
+      10% { opacity: 1; transform: translateX(0) scale(1); }
+      24% { opacity: 1; transform: translateX(220px) scale(1); }
+      31%, 100% { opacity: 0; transform: translateX(290px) scale(0.42); }
+    }
+
+    @keyframes loaderSlotPulse {
+      0%, 24%, 38%, 100% { box-shadow: 0 0 0 5px rgba(46, 132, 74, 0.12); }
+      31% { box-shadow: 0 0 0 12px rgba(46, 132, 74, 0.22); }
+    }
+
+
+    .processing-stage {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(300px, 360px) minmax(280px, 340px);
+      gap: 28px;
+      align-items: center;
+      justify-content: center;
+      width: min(760px, 100%);
+      height: 100%;
+    }
+
+    .trigger-new-box,
+    .extraction-box {
+      position: relative;
+      min-height: 152px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid #d8dde6;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+    }
+
+    .trigger-new-box {
+      border-top: 5px solid var(--salesforce-blue);
+      animation: triggerNewReceive 9s ease-in-out infinite;
+    }
+
+    .extraction-box {
+      border-top: 5px solid #e28705;
+      animation: extractionActivate 9s ease-in-out infinite;
+    }
+
+    .processing-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 10px;
+      color: #16325c;
+      background: linear-gradient(180deg, #ffffff 0%, #eef4fb 100%);
+      border-bottom: 1px solid #d8dde6;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .trigger-count {
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--salesforce-blue);
+      font-size: 11px;
+    }
+
+    .trigger-records {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: repeat(15, minmax(0, 1fr));
+      gap: 2px;
+      padding: 6px 8px 8px;
+      opacity: 0;
+      animation: triggerRowsAppear 9s ease-in-out infinite;
+    }
+
+    .trigger-record {
+      padding: 1px 7px;
+      border: 1px solid #d8dde6;
+      border-left: 4px solid var(--salesforce-blue);
+      border-radius: 7px;
+      background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+      color: #16325c;
+      font-size: 9px;
+      font-weight: 800;
+      line-height: 1.05;
+      animation: processOneRecord 9s ease-in-out infinite;
+    }
+
+    .trigger-record:nth-child(1) { animation-delay: 3.15s; }
+    .trigger-record:nth-child(2) { animation-delay: 3.3s; }
+    .trigger-record:nth-child(3) { animation-delay: 3.45s; }
+    .trigger-record:nth-child(4) { animation-delay: 3.6s; }
+    .trigger-record:nth-child(5) { animation-delay: 3.75s; }
+    .trigger-record:nth-child(6) { animation-delay: 3.9s; }
+    .trigger-record:nth-child(7) { animation-delay: 4.05s; }
+    .trigger-record:nth-child(8) { animation-delay: 4.2s; }
+    .trigger-record:nth-child(9) { animation-delay: 4.35s; }
+    .trigger-record:nth-child(10) { animation-delay: 4.5s; }
+    .trigger-record:nth-child(11) { animation-delay: 4.65s; }
+    .trigger-record:nth-child(12) { animation-delay: 4.8s; }
+    .trigger-record:nth-child(13) { animation-delay: 4.95s; }
+    .trigger-record:nth-child(14) { animation-delay: 5.1s; }
+    .trigger-record:nth-child(15) { animation-delay: 5.25s; }
+
+    .extraction-stream {
+      position: relative;
+      height: 116px;
+      margin: 10px 12px 12px;
+      border-radius: 12px;
+      background: linear-gradient(90deg, rgba(226, 135, 5, 0.07), rgba(21, 137, 238, 0.05));
+      border: 1px dashed rgba(226, 135, 5, 0.45);
+      overflow: hidden;
+    }
+
+    .extraction-stream::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      top: 50%;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(21, 137, 238, 0.08), rgba(226, 135, 5, 0.48), rgba(46, 132, 74, 0.2));
+      transform: translateY(-50%);
+    }
+
+    .extracted-record {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      width: 148px;
+      padding: 3px 8px;
+      border: 1px solid #d8dde6;
+      border-left: 4px solid #e28705;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #ffffff 0%, #fff3df 100%);
+      box-shadow: 0 5px 12px rgba(22, 50, 92, 0.12);
+      color: #5f3b00;
+      font-size: 10px;
+      font-weight: 900;
+      line-height: 1.1;
+      opacity: 0;
+      transform: translate(0, -50%);
+      animation: extractOneRecord 9s cubic-bezier(.42, 0, .18, 1) infinite;
+    }
+
+    .extracted-record:nth-child(1) { animation-delay: 3.15s; }
+    .extracted-record:nth-child(2) { animation-delay: 3.3s; }
+    .extracted-record:nth-child(3) { animation-delay: 3.45s; }
+    .extracted-record:nth-child(4) { animation-delay: 3.6s; }
+    .extracted-record:nth-child(5) { animation-delay: 3.75s; }
+    .extracted-record:nth-child(6) { animation-delay: 3.9s; }
+    .extracted-record:nth-child(7) { animation-delay: 4.05s; }
+    .extracted-record:nth-child(8) { animation-delay: 4.2s; }
+    .extracted-record:nth-child(9) { animation-delay: 4.35s; }
+    .extracted-record:nth-child(10) { animation-delay: 4.5s; }
+    .extracted-record:nth-child(11) { animation-delay: 4.65s; }
+    .extracted-record:nth-child(12) { animation-delay: 4.8s; }
+    .extracted-record:nth-child(13) { animation-delay: 4.95s; }
+    .extracted-record:nth-child(14) { animation-delay: 5.1s; }
+    .extracted-record:nth-child(15) { animation-delay: 5.25s; }
+
+    .incoming-trigger-new {
+      position: absolute;
+      top: -58px;
+      left: 18px;
+      z-index: 4;
+      display: grid;
+      gap: 2px;
+      width: 134px;
+      opacity: 0;
+      animation: loaderToTriggerNew 9s cubic-bezier(.42, 0, .18, 1) infinite;
+    }
+
+    .incoming-trigger-new .record {
+      padding: 1px 7px;
+      border-left-color: var(--salesforce-blue);
+      background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+      font-size: 9px;
+    }
+
+    @keyframes loaderToTriggerNew {
+      0%, 31% { opacity: 0; transform: translate(0, -18px) scale(.9); }
+      38% { opacity: 1; transform: translate(0, -18px) scale(.9); }
+      49% { opacity: 1; transform: translate(0, 78px) scale(.9); }
+      56%, 100% { opacity: 0; transform: translate(0, 92px) scale(.9); }
+    }
+
+    @keyframes triggerNewReceive {
+      0%, 38%, 100% { box-shadow: var(--card-shadow); }
+      49%, 60% { box-shadow: 0 0 0 5px rgba(21, 137, 238, 0.16), var(--card-shadow); }
+    }
+
+    @keyframes triggerRowsAppear {
+      0%, 34% { opacity: 0; }
+      40%, 78% { opacity: 1; }
+      86%, 100% { opacity: 0; }
+    }
+
+    @keyframes processOneRecord {
+      0%, 2.5%, 100% { background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%); transform: translateX(0); }
+      1.2% { background: linear-gradient(180deg, #e8f3ff 0%, #d8ebff 100%); transform: translateX(6px); }
+    }
+
+    @keyframes extractionActivate {
+      0%, 48%, 100% { box-shadow: var(--card-shadow); }
+      56%, 78% { box-shadow: 0 0 0 5px rgba(226, 135, 5, 0.14), var(--card-shadow); }
+    }
+
+    @keyframes extractOneRecord {
+      0%, 100% { opacity: 0; transform: translate(0, -50%); }
+      1% { opacity: 1; transform: translate(0, -50%); }
+      5% { opacity: 1; transform: translate(118px, calc(-50% - 20px)); }
+      9% { opacity: 1; transform: translate(88px, calc(-50% + 22px)); }
+      13% { opacity: 0; transform: translate(164px, -50%); }
+    }
+
+
+    .contact-drop-zone {
+      position: absolute;
+      top: -182px;
+      left: 50%;
+      z-index: 8;
+      width: calc(100% - 42px);
+      max-width: 300px;
+      pointer-events: none;
+      transform: translateX(-50%);
+      animation: contactDropList 9s cubic-bezier(.42, 0, .18, 1) infinite;
+    }
+
+    .contact-drop-zone .record {
+      margin-bottom: 3px;
+      border-left-color: #2e844a;
+      background: linear-gradient(180deg, #ffffff 0%, #effaf3 100%);
+    }
+
+    .contact-records {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: repeat(15, minmax(0, 1fr));
+      gap: 2px;
+      padding: 5px 9px;
+      overflow: hidden;
+      opacity: 0;
+      animation: contactStoredRecords 9s ease-in-out infinite;
+    }
+
+    .contact-records .record {
+      border-left-color: #2e844a;
+      background: linear-gradient(180deg, #ffffff 0%, #effaf3 100%);
+    }
+
+    @keyframes contactDropList {
+      0%, 76% { opacity: 0; transform: translate(-50%, -12px) scale(.98); }
+      82% { opacity: 1; transform: translate(-50%, -12px) scale(.98); }
+      92% { opacity: 1; transform: translate(-50%, 206px) scale(.98); }
+      98%, 100% { opacity: 0; transform: translate(-50%, 230px) scale(.98); }
+    }
+
+    @keyframes contactStoredRecords {
+      0%, 92% { opacity: 0; }
+      97%, 99% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    .objects-wrapper {
+      display: grid;
+      grid-template-columns: minmax(360px, 1fr) minmax(300px, 0.78fr);
+      gap: 22px;
+      width: min(980px, 100%);
+      height: 100%;
+      align-items: stretch;
+    }
+
+    .object-card {
+      position: relative;
+      display: flex;
+      min-height: 0;
+      flex-direction: column;
+      overflow: hidden;
+      padding-top: 18px;
+      border-radius: 48% / 22px;
+      background: linear-gradient(90deg, #f7f9fc 0%, #ffffff 18%, #ffffff 72%, #e8f1fb 100%);
+      border: 1px solid #b8c6d9;
+      box-shadow: var(--card-shadow);
+    }
+    .object-card::before,
+    .object-card::after {
+      content: '';
+      position: absolute;
+      left: -1px;
+      right: -1px;
+      height: 38px;
+      border: 1px solid #b8c6d9;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+    .object-card::before {
+      top: -1px;
+      z-index: 2;
+      background: radial-gradient(ellipse at center, #ffffff 0%, #dcecff 62%, #b9d9fb 100%);
+      box-shadow: inset 0 8px 14px rgba(255, 255, 255, 0.72), 0 5px 9px rgba(22, 50, 92, 0.12);
+    }
+    .object-card::after {
+      bottom: -20px;
+      z-index: 0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.28), rgba(11, 92, 171, 0.14));
+      box-shadow: inset 0 -7px 12px rgba(22, 50, 92, 0.11);
+    }
+    .object-card.contacts {
+      overflow: visible;
+    }
+    .object-card.contacts::before {
+      background: radial-gradient(ellipse at center, #ffffff 0%, #dff4e8 62%, #b9e6cc 100%);
+    }
+
+    .object-header {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 16px;
+      padding: 7px 12px;
+      color: #fff;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #16325c 0%, var(--salesforce-blue) 100%);
+      box-shadow: 0 8px 14px rgba(22, 50, 92, 0.16);
+    }
+    .object-card.contacts .object-header {
+      background: linear-gradient(135deg, #2e844a 0%, var(--success-green) 100%);
+    }
+
+    .object-name {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 800;
+    }
+    .record-count {
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.22);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .records {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: repeat(10, minmax(0, 1fr));
+      gap: 3px;
+      padding: 7px 10px;
+      overflow: hidden;
+    }
+
+    .record {
+      padding: 2px 9px;
+      border: 1px solid #d8dde6;
+      border-left: 4px solid var(--salesforce-blue);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #fff 0%, #f7f9fc 100%);
+      box-shadow: 0 2px 7px rgba(22, 50, 92, 0.07);
+      font-size: 11px;
+    }
+    .record strong {
+      display: block;
+      color: #16325c;
+      font-size: 11px;
+      line-height: 1.08;
+    }
+    .record span { color: var(--muted); }
+
+    .object-body {
+      position: relative;
+      z-index: 1;
+      flex: 1;
+      margin: 0 16px 16px;
+      padding-top: 6px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.24), rgba(255,255,255,0.68) 45%, rgba(11,92,171,0.07));
+    }
+    .contacts .object-body {
+      background: linear-gradient(90deg, rgba(255,255,255,0.24), rgba(255,255,255,0.68) 45%, rgba(4,132,75,0.07));
+    }
+    .contacts-body {
+      display: grid;
+      place-items: stretch;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-title">☁️ Salesforce オブジェクト状態図</div>
+    <div class="badge">初期状態</div>
+  </header>
+
+  <main class="architecture-container" aria-label="Salesforceデモの3階層画面">
+    <section class="tier tier-top" aria-labelledby="top-label">
+      <div id="top-label" class="tier-label">上段：CSV投入</div>
+      <div class="flow-stage" aria-label="ユーザーがCSVをデータローダーに投入するアニメーション">
+        <div class="source-user" aria-hidden="true">🧑‍💼</div>
+        <div class="flow-line" aria-hidden="true"></div>
+        <div class="csv-file" aria-hidden="true">CSV</div>
+        <article class="data-loader" aria-label="データローダー">
+          <div class="data-loader-title">Data Loader</div>
+        </article>
+      </div>
+    </section>
+
+    <section class="tier tier-middle" aria-labelledby="middle-label">
+      <div id="middle-label" class="tier-label">中段：trigger.new処理</div>
+      <div class="processing-stage" aria-label="trigger.newの15件を1件ずつ取り出してずらすアニメーション">
+        <section class="trigger-new-box" aria-label="trigger.new 15件">
+          <div class="processing-title"><span>trigger.new</span><span class="trigger-count">15 records</span></div>
+          <div class="incoming-trigger-new" aria-hidden="true">
+          <div class="record"><strong>01</strong></div>
+          <div class="record"><strong>02</strong></div>
+          <div class="record"><strong>03</strong></div>
+          <div class="record"><strong>04</strong></div>
+          <div class="record"><strong>05</strong></div>
+          <div class="record"><strong>06</strong></div>
+          <div class="record"><strong>07</strong></div>
+          <div class="record"><strong>08</strong></div>
+          <div class="record"><strong>09</strong></div>
+          <div class="record"><strong>10</strong></div>
+          <div class="record"><strong>11</strong></div>
+          <div class="record"><strong>12</strong></div>
+          <div class="record"><strong>13</strong></div>
+          <div class="record"><strong>14</strong></div>
+          <div class="record"><strong>15</strong></div>
+          </div>
+          <div class="trigger-records" aria-hidden="true">
+            <div class="trigger-record">01. 高橋 一郎</div>
+            <div class="trigger-record">02. 佐藤 花子</div>
+            <div class="trigger-record">03. 鈴木 太郎</div>
+            <div class="trigger-record">04. 田中 美咲</div>
+            <div class="trigger-record">05. 伊藤 健</div>
+            <div class="trigger-record">06. 渡辺 葵</div>
+            <div class="trigger-record">07. 山本 大輔</div>
+            <div class="trigger-record">08. 中村 優子</div>
+            <div class="trigger-record">09. 小林 亮</div>
+            <div class="trigger-record">10. 加藤 真央</div>
+            <div class="trigger-record">11. 吉田 翔</div>
+            <div class="trigger-record">12. 山田 結衣</div>
+            <div class="trigger-record">13. 佐々木 蓮</div>
+            <div class="trigger-record">14. 松本 陽菜</div>
+            <div class="trigger-record">15. 井上 直樹</div>
+          </div>
+        </section>
+        <section class="extraction-box" aria-label="trigger.newから15件を1件ずつ取り出すアニメーション">
+          <div class="processing-title"><span>1件ずつ取り出し</span><span class="trigger-count">15</span></div>
+          <div class="extraction-stream" aria-hidden="true">
+            <div class="extracted-record">01. 高橋 一郎</div>
+            <div class="extracted-record">02. 佐藤 花子</div>
+            <div class="extracted-record">03. 鈴木 太郎</div>
+            <div class="extracted-record">04. 田中 美咲</div>
+            <div class="extracted-record">05. 伊藤 健</div>
+            <div class="extracted-record">06. 渡辺 葵</div>
+            <div class="extracted-record">07. 山本 大輔</div>
+            <div class="extracted-record">08. 中村 優子</div>
+            <div class="extracted-record">09. 小林 亮</div>
+            <div class="extracted-record">10. 加藤 真央</div>
+            <div class="extracted-record">11. 吉田 翔</div>
+            <div class="extracted-record">12. 山田 結衣</div>
+            <div class="extracted-record">13. 佐々木 蓮</div>
+            <div class="extracted-record">14. 松本 陽菜</div>
+            <div class="extracted-record">15. 井上 直樹</div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="tier tier-bottom" aria-labelledby="bottom-label">
+      <div id="bottom-label" class="tier-label">下段：Salesforceオブジェクト</div>
+      <div class="objects-wrapper">
+        <article class="object-card accounts" aria-label="取引先オブジェクト">
+          <header class="object-header">
+            <div class="object-name">🏢 取引先オブジェクト</div>
+            <div class="record-count">10 records</div>
+          </header>
+          <div class="object-body records">
+            <div class="record"><strong>Acme株式会社</strong></div>
+            <div class="record"><strong>グローバル商事</strong></div>
+            <div class="record"><strong>東京テック</strong></div>
+            <div class="record"><strong>北斗システム</strong></div>
+            <div class="record"><strong>サクラ食品</strong></div>
+            <div class="record"><strong>Blue Ocean合同会社</strong></div>
+            <div class="record"><strong>Future Works</strong></div>
+            <div class="record"><strong>山吹物流</strong></div>
+            <div class="record"><strong>Cloud Nine</strong></div>
+            <div class="record"><strong>南風デザイン</strong></div>
+          </div>
+        </article>
+
+        <article class="object-card contacts" aria-label="取引先責任者オブジェクト">
+          <header class="object-header">
+            <div class="object-name">👤 取引先責任者オブジェクト</div>
+            <div class="record-count">15 records</div>
+          </header>
+          <div class="contact-drop-zone" aria-hidden="true">
+            <div class="record"><strong>高橋 一郎</strong></div>
+            <div class="record"><strong>佐藤 花子</strong></div>
+            <div class="record"><strong>鈴木 太郎</strong></div>
+            <div class="record"><strong>田中 美咲</strong></div>
+            <div class="record"><strong>伊藤 健</strong></div>
+            <div class="record"><strong>渡辺 葵</strong></div>
+            <div class="record"><strong>山本 大輔</strong></div>
+            <div class="record"><strong>中村 優子</strong></div>
+            <div class="record"><strong>小林 亮</strong></div>
+            <div class="record"><strong>加藤 真央</strong></div>
+            <div class="record"><strong>吉田 翔</strong></div>
+            <div class="record"><strong>山田 結衣</strong></div>
+            <div class="record"><strong>佐々木 蓮</strong></div>
+            <div class="record"><strong>松本 陽菜</strong></div>
+            <div class="record"><strong>井上 直樹</strong></div>
+          </div>
+          <div class="object-body contacts-body contact-records" aria-hidden="true">
+              <div class="record"><strong>高橋 一郎</strong></div>
+              <div class="record"><strong>佐藤 花子</strong></div>
+              <div class="record"><strong>鈴木 太郎</strong></div>
+              <div class="record"><strong>田中 美咲</strong></div>
+              <div class="record"><strong>伊藤 健</strong></div>
+              <div class="record"><strong>渡辺 葵</strong></div>
+              <div class="record"><strong>山本 大輔</strong></div>
+              <div class="record"><strong>中村 優子</strong></div>
+              <div class="record"><strong>小林 亮</strong></div>
+              <div class="record"><strong>加藤 真央</strong></div>
+              <div class="record"><strong>吉田 翔</strong></div>
+              <div class="record"><strong>山田 結衣</strong></div>
+              <div class="record"><strong>佐々木 蓮</strong></div>
+              <div class="record"><strong>松本 陽菜</strong></div>
+              <div class="record"><strong>井上 直樹</strong></div>
+          </div>
+        </article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
