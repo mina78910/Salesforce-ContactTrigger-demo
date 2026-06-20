@@ -193,7 +193,7 @@
       background: linear-gradient(90deg, #2e844a, #45c65a);
       box-shadow: 0 0 0 5px rgba(46, 132, 74, 0.12);
       transform: translateX(-50%);
-      animation: loaderSlotPulse 5.6s ease-in-out infinite;
+      animation: loaderSlotPulse 9s ease-in-out infinite;
     }
 
     .data-loader-title {
@@ -222,7 +222,7 @@
       font-size: 16px;
       font-weight: 900;
       letter-spacing: 0.04em;
-      animation: csvToLoader 5.6s cubic-bezier(.45, 0, .2, 1) infinite;
+      animation: csvToLoader 9s cubic-bezier(.45, 0, .2, 1) infinite;
     }
 
     .csv-file::before {
@@ -247,15 +247,202 @@
     }
 
     @keyframes csvToLoader {
-      0%, 8% { opacity: 0; transform: translateX(0) scale(0.82); }
-      16% { opacity: 1; transform: translateX(0) scale(1); }
-      38% { opacity: 1; transform: translateX(220px) scale(1); }
-      48%, 100% { opacity: 0; transform: translateX(290px) scale(0.42); }
+      0%, 5% { opacity: 0; transform: translateX(0) scale(0.82); }
+      10% { opacity: 1; transform: translateX(0) scale(1); }
+      24% { opacity: 1; transform: translateX(220px) scale(1); }
+      31%, 100% { opacity: 0; transform: translateX(290px) scale(0.42); }
     }
 
     @keyframes loaderSlotPulse {
-      0%, 36%, 60%, 100% { box-shadow: 0 0 0 5px rgba(46, 132, 74, 0.12); }
-      44% { box-shadow: 0 0 0 12px rgba(46, 132, 74, 0.22); }
+      0%, 24%, 38%, 100% { box-shadow: 0 0 0 5px rgba(46, 132, 74, 0.12); }
+      31% { box-shadow: 0 0 0 12px rgba(46, 132, 74, 0.22); }
+    }
+
+
+    .processing-stage {
+      position: relative;
+      display: grid;
+      grid-template-columns: minmax(260px, 330px) minmax(260px, 330px);
+      gap: 28px;
+      align-items: center;
+      justify-content: center;
+      width: min(760px, 100%);
+      height: 100%;
+    }
+
+    .trigger-new-box,
+    .trigger-handler-box {
+      position: relative;
+      min-height: 152px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.94);
+      border: 1px solid #d8dde6;
+      box-shadow: var(--card-shadow);
+      overflow: hidden;
+    }
+
+    .trigger-new-box {
+      border-top: 5px solid var(--salesforce-blue);
+      animation: triggerNewReceive 9s ease-in-out infinite;
+    }
+
+    .trigger-handler-box {
+      border-top: 5px solid #e28705;
+      animation: handlerActivate 9s ease-in-out infinite;
+    }
+
+    .processing-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 10px;
+      color: #16325c;
+      background: linear-gradient(180deg, #ffffff 0%, #eef4fb 100%);
+      border-bottom: 1px solid #d8dde6;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .trigger-count {
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: #fff;
+      background: var(--salesforce-blue);
+      font-size: 11px;
+    }
+
+    .trigger-records,
+    .handler-steps {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2px;
+      padding: 6px 8px 8px;
+    }
+
+    .trigger-records {
+      grid-template-rows: repeat(15, minmax(0, 1fr));
+      opacity: 0;
+      animation: triggerRowsAppear 9s ease-in-out infinite;
+    }
+
+    .trigger-record {
+      padding: 1px 7px;
+      border: 1px solid #d8dde6;
+      border-left: 4px solid var(--salesforce-blue);
+      border-radius: 7px;
+      background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+      color: #16325c;
+      font-size: 9px;
+      font-weight: 800;
+      line-height: 1.05;
+      animation: processOneRecord 9s ease-in-out infinite;
+    }
+
+    .trigger-record:nth-child(1) { animation-delay: 2.8s; }
+    .trigger-record:nth-child(2) { animation-delay: 2.95s; }
+    .trigger-record:nth-child(3) { animation-delay: 3.1s; }
+    .trigger-record:nth-child(4) { animation-delay: 3.25s; }
+    .trigger-record:nth-child(5) { animation-delay: 3.4s; }
+    .trigger-record:nth-child(6) { animation-delay: 3.55s; }
+    .trigger-record:nth-child(7) { animation-delay: 3.7s; }
+    .trigger-record:nth-child(8) { animation-delay: 3.85s; }
+    .trigger-record:nth-child(9) { animation-delay: 4s; }
+    .trigger-record:nth-child(10) { animation-delay: 4.15s; }
+    .trigger-record:nth-child(11) { animation-delay: 4.3s; }
+    .trigger-record:nth-child(12) { animation-delay: 4.45s; }
+    .trigger-record:nth-child(13) { animation-delay: 4.6s; }
+    .trigger-record:nth-child(14) { animation-delay: 4.75s; }
+    .trigger-record:nth-child(15) { animation-delay: 4.9s; }
+
+    .handler-steps {
+      grid-template-rows: repeat(4, minmax(0, 1fr));
+      padding-top: 10px;
+    }
+
+    .handler-step {
+      position: relative;
+      padding: 6px 9px 6px 24px;
+      border: 1px solid #f3d19e;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #fffaf2 0%, #fff3df 100%);
+      color: #5f3b00;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .handler-step::before {
+      content: '';
+      position: absolute;
+      left: 9px;
+      top: 50%;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #e28705;
+      transform: translateY(-50%);
+    }
+
+    .loop-indicator {
+      position: absolute;
+      right: 12px;
+      bottom: 10px;
+      width: 58px;
+      height: 58px;
+      border: 3px solid rgba(226, 135, 5, 0.38);
+      border-right-color: #e28705;
+      border-radius: 50%;
+      animation: loopSpin 1s linear infinite;
+    }
+
+    .incoming-trigger-new {
+      position: absolute;
+      top: -58px;
+      left: 18px;
+      z-index: 4;
+      display: grid;
+      gap: 2px;
+      width: 134px;
+      opacity: 0;
+      animation: loaderToTriggerNew 9s cubic-bezier(.42, 0, .18, 1) infinite;
+    }
+
+    .incoming-trigger-new .record {
+      padding: 1px 7px;
+      border-left-color: var(--salesforce-blue);
+      background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+      font-size: 9px;
+    }
+
+    @keyframes loaderToTriggerNew {
+      0%, 31% { opacity: 0; transform: translate(0, -18px) scale(.9); }
+      38% { opacity: 1; transform: translate(0, -18px) scale(.9); }
+      49% { opacity: 1; transform: translate(0, 78px) scale(.9); }
+      56%, 100% { opacity: 0; transform: translate(0, 92px) scale(.9); }
+    }
+
+    @keyframes triggerNewReceive {
+      0%, 38%, 100% { box-shadow: var(--card-shadow); }
+      49%, 60% { box-shadow: 0 0 0 5px rgba(21, 137, 238, 0.16), var(--card-shadow); }
+    }
+
+    @keyframes triggerRowsAppear {
+      0%, 46% { opacity: 0; }
+      54%, 76% { opacity: 1; }
+      86%, 100% { opacity: 0; }
+    }
+
+    @keyframes processOneRecord {
+      0%, 2.5%, 100% { background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%); transform: translateX(0); }
+      1.2% { background: linear-gradient(180deg, #e8f3ff 0%, #d8ebff 100%); transform: translateX(6px); }
+    }
+
+    @keyframes handlerActivate {
+      0%, 48%, 100% { box-shadow: var(--card-shadow); }
+      58%, 76% { box-shadow: 0 0 0 5px rgba(226, 135, 5, 0.14), var(--card-shadow); }
+    }
+
+    @keyframes loopSpin {
+      to { transform: rotate(360deg); }
     }
 
 
@@ -268,7 +455,7 @@
       max-width: 300px;
       pointer-events: none;
       transform: translateX(-50%);
-      animation: contactDropList 5.6s cubic-bezier(.42, 0, .18, 1) infinite;
+      animation: contactDropList 9s cubic-bezier(.42, 0, .18, 1) infinite;
     }
 
     .contact-drop-zone .record {
@@ -285,7 +472,7 @@
       padding: 5px 9px;
       overflow: hidden;
       opacity: 0;
-      animation: contactStoredRecords 5.6s ease-in-out infinite;
+      animation: contactStoredRecords 9s ease-in-out infinite;
     }
 
     .contact-records .record {
@@ -294,15 +481,15 @@
     }
 
     @keyframes contactDropList {
-      0%, 50% { opacity: 0; transform: translate(-50%, -12px) scale(.98); }
-      58% { opacity: 1; transform: translate(-50%, -12px) scale(.98); }
-      78% { opacity: 1; transform: translate(-50%, 206px) scale(.98); }
-      88%, 100% { opacity: 0; transform: translate(-50%, 230px) scale(.98); }
+      0%, 76% { opacity: 0; transform: translate(-50%, -12px) scale(.98); }
+      82% { opacity: 1; transform: translate(-50%, -12px) scale(.98); }
+      92% { opacity: 1; transform: translate(-50%, 206px) scale(.98); }
+      98%, 100% { opacity: 0; transform: translate(-50%, 230px) scale(.98); }
     }
 
     @keyframes contactStoredRecords {
-      0%, 78% { opacity: 0; }
-      86%, 96% { opacity: 1; }
+      0%, 92% { opacity: 0; }
+      97%, 99% { opacity: 1; }
       100% { opacity: 0; }
     }
 
@@ -451,8 +638,56 @@
     </section>
 
     <section class="tier tier-middle" aria-labelledby="middle-label">
-      <div id="middle-label" class="tier-label">中段：処理エリア</div>
-      <div class="middle-spacer" aria-hidden="true"></div>
+      <div id="middle-label" class="tier-label">中段：トリガ処理</div>
+      <div class="processing-stage" aria-label="trigger.newの15件をトリガハンドラが1件ずつ処理するアニメーション">
+        <section class="trigger-new-box" aria-label="trigger.new 15件">
+          <div class="processing-title"><span>trigger.new</span><span class="trigger-count">15 records</span></div>
+          <div class="incoming-trigger-new" aria-hidden="true">
+          <div class="record"><strong>01</strong></div>
+          <div class="record"><strong>02</strong></div>
+          <div class="record"><strong>03</strong></div>
+          <div class="record"><strong>04</strong></div>
+          <div class="record"><strong>05</strong></div>
+          <div class="record"><strong>06</strong></div>
+          <div class="record"><strong>07</strong></div>
+          <div class="record"><strong>08</strong></div>
+          <div class="record"><strong>09</strong></div>
+          <div class="record"><strong>10</strong></div>
+          <div class="record"><strong>11</strong></div>
+          <div class="record"><strong>12</strong></div>
+          <div class="record"><strong>13</strong></div>
+          <div class="record"><strong>14</strong></div>
+          <div class="record"><strong>15</strong></div>
+          </div>
+          <div class="trigger-records" aria-hidden="true">
+            <div class="trigger-record">01. 高橋 一郎</div>
+            <div class="trigger-record">02. 佐藤 花子</div>
+            <div class="trigger-record">03. 鈴木 太郎</div>
+            <div class="trigger-record">04. 田中 美咲</div>
+            <div class="trigger-record">05. 伊藤 健</div>
+            <div class="trigger-record">06. 渡辺 葵</div>
+            <div class="trigger-record">07. 山本 大輔</div>
+            <div class="trigger-record">08. 中村 優子</div>
+            <div class="trigger-record">09. 小林 亮</div>
+            <div class="trigger-record">10. 加藤 真央</div>
+            <div class="trigger-record">11. 吉田 翔</div>
+            <div class="trigger-record">12. 山田 結衣</div>
+            <div class="trigger-record">13. 佐々木 蓮</div>
+            <div class="trigger-record">14. 松本 陽菜</div>
+            <div class="trigger-record">15. 井上 直樹</div>
+          </div>
+        </section>
+        <section class="trigger-handler-box" aria-label="トリガハンドラ ループ処理">
+          <div class="processing-title"><span>Trigger Handler</span><span class="trigger-count">loop</span></div>
+          <div class="handler-steps">
+            <div class="handler-step">for (Contact c : Trigger.new)</div>
+            <div class="handler-step">1件ずつ検証</div>
+            <div class="handler-step">必要項目を整形</div>
+            <div class="handler-step">保存対象として確定</div>
+          </div>
+          <div class="loop-indicator" aria-hidden="true"></div>
+        </section>
+      </div>
     </section>
 
     <section class="tier tier-bottom" aria-labelledby="bottom-label">
