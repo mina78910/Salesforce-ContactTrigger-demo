@@ -262,7 +262,7 @@
     .processing-stage {
       position: relative;
       display: grid;
-      grid-template-columns: minmax(260px, 330px) minmax(260px, 330px);
+      grid-template-columns: minmax(300px, 360px) minmax(280px, 340px);
       gap: 28px;
       align-items: center;
       justify-content: center;
@@ -271,7 +271,7 @@
     }
 
     .trigger-new-box,
-    .trigger-handler-box {
+    .extraction-box {
       position: relative;
       min-height: 152px;
       border-radius: 14px;
@@ -286,9 +286,9 @@
       animation: triggerNewReceive 9s ease-in-out infinite;
     }
 
-    .trigger-handler-box {
+    .extraction-box {
       border-top: 5px solid #e28705;
-      animation: handlerActivate 9s ease-in-out infinite;
+      animation: extractionActivate 9s ease-in-out infinite;
     }
 
     .processing-title {
@@ -311,16 +311,12 @@
       font-size: 11px;
     }
 
-    .trigger-records,
-    .handler-steps {
+    .trigger-records {
       display: grid;
       grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: repeat(15, minmax(0, 1fr));
       gap: 2px;
       padding: 6px 8px 8px;
-    }
-
-    .trigger-records {
-      grid-template-rows: repeat(15, minmax(0, 1fr));
       opacity: 0;
       animation: triggerRowsAppear 9s ease-in-out infinite;
     }
@@ -338,61 +334,79 @@
       animation: processOneRecord 9s ease-in-out infinite;
     }
 
-    .trigger-record:nth-child(1) { animation-delay: 2.8s; }
-    .trigger-record:nth-child(2) { animation-delay: 2.95s; }
-    .trigger-record:nth-child(3) { animation-delay: 3.1s; }
-    .trigger-record:nth-child(4) { animation-delay: 3.25s; }
-    .trigger-record:nth-child(5) { animation-delay: 3.4s; }
-    .trigger-record:nth-child(6) { animation-delay: 3.55s; }
-    .trigger-record:nth-child(7) { animation-delay: 3.7s; }
-    .trigger-record:nth-child(8) { animation-delay: 3.85s; }
-    .trigger-record:nth-child(9) { animation-delay: 4s; }
-    .trigger-record:nth-child(10) { animation-delay: 4.15s; }
-    .trigger-record:nth-child(11) { animation-delay: 4.3s; }
-    .trigger-record:nth-child(12) { animation-delay: 4.45s; }
-    .trigger-record:nth-child(13) { animation-delay: 4.6s; }
-    .trigger-record:nth-child(14) { animation-delay: 4.75s; }
-    .trigger-record:nth-child(15) { animation-delay: 4.9s; }
+    .trigger-record:nth-child(1) { animation-delay: 3.15s; }
+    .trigger-record:nth-child(2) { animation-delay: 3.3s; }
+    .trigger-record:nth-child(3) { animation-delay: 3.45s; }
+    .trigger-record:nth-child(4) { animation-delay: 3.6s; }
+    .trigger-record:nth-child(5) { animation-delay: 3.75s; }
+    .trigger-record:nth-child(6) { animation-delay: 3.9s; }
+    .trigger-record:nth-child(7) { animation-delay: 4.05s; }
+    .trigger-record:nth-child(8) { animation-delay: 4.2s; }
+    .trigger-record:nth-child(9) { animation-delay: 4.35s; }
+    .trigger-record:nth-child(10) { animation-delay: 4.5s; }
+    .trigger-record:nth-child(11) { animation-delay: 4.65s; }
+    .trigger-record:nth-child(12) { animation-delay: 4.8s; }
+    .trigger-record:nth-child(13) { animation-delay: 4.95s; }
+    .trigger-record:nth-child(14) { animation-delay: 5.1s; }
+    .trigger-record:nth-child(15) { animation-delay: 5.25s; }
 
-    .handler-steps {
-      grid-template-rows: repeat(4, minmax(0, 1fr));
-      padding-top: 10px;
-    }
-
-    .handler-step {
+    .extraction-stream {
       position: relative;
-      padding: 6px 9px 6px 24px;
-      border: 1px solid #f3d19e;
-      border-radius: 10px;
-      background: linear-gradient(180deg, #fffaf2 0%, #fff3df 100%);
-      color: #5f3b00;
-      font-size: 11px;
-      font-weight: 800;
+      height: 116px;
+      margin: 10px 12px 12px;
+      border-radius: 12px;
+      background: linear-gradient(90deg, rgba(226, 135, 5, 0.07), rgba(21, 137, 238, 0.05));
+      border: 1px dashed rgba(226, 135, 5, 0.45);
+      overflow: hidden;
     }
 
-    .handler-step::before {
+    .extraction-stream::before {
       content: '';
       position: absolute;
-      left: 9px;
+      left: 20px;
+      right: 20px;
       top: 50%;
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #e28705;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(21, 137, 238, 0.08), rgba(226, 135, 5, 0.48), rgba(46, 132, 74, 0.2));
       transform: translateY(-50%);
     }
 
-    .loop-indicator {
+    .extracted-record {
       position: absolute;
-      right: 12px;
-      bottom: 10px;
-      width: 58px;
-      height: 58px;
-      border: 3px solid rgba(226, 135, 5, 0.38);
-      border-right-color: #e28705;
-      border-radius: 50%;
-      animation: loopSpin 1s linear infinite;
+      left: 12px;
+      top: 50%;
+      width: 148px;
+      padding: 3px 8px;
+      border: 1px solid #d8dde6;
+      border-left: 4px solid #e28705;
+      border-radius: 8px;
+      background: linear-gradient(180deg, #ffffff 0%, #fff3df 100%);
+      box-shadow: 0 5px 12px rgba(22, 50, 92, 0.12);
+      color: #5f3b00;
+      font-size: 10px;
+      font-weight: 900;
+      line-height: 1.1;
+      opacity: 0;
+      transform: translate(0, -50%);
+      animation: extractOneRecord 9s cubic-bezier(.42, 0, .18, 1) infinite;
     }
+
+    .extracted-record:nth-child(1) { animation-delay: 3.15s; }
+    .extracted-record:nth-child(2) { animation-delay: 3.3s; }
+    .extracted-record:nth-child(3) { animation-delay: 3.45s; }
+    .extracted-record:nth-child(4) { animation-delay: 3.6s; }
+    .extracted-record:nth-child(5) { animation-delay: 3.75s; }
+    .extracted-record:nth-child(6) { animation-delay: 3.9s; }
+    .extracted-record:nth-child(7) { animation-delay: 4.05s; }
+    .extracted-record:nth-child(8) { animation-delay: 4.2s; }
+    .extracted-record:nth-child(9) { animation-delay: 4.35s; }
+    .extracted-record:nth-child(10) { animation-delay: 4.5s; }
+    .extracted-record:nth-child(11) { animation-delay: 4.65s; }
+    .extracted-record:nth-child(12) { animation-delay: 4.8s; }
+    .extracted-record:nth-child(13) { animation-delay: 4.95s; }
+    .extracted-record:nth-child(14) { animation-delay: 5.1s; }
+    .extracted-record:nth-child(15) { animation-delay: 5.25s; }
 
     .incoming-trigger-new {
       position: absolute;
@@ -426,8 +440,8 @@
     }
 
     @keyframes triggerRowsAppear {
-      0%, 46% { opacity: 0; }
-      54%, 76% { opacity: 1; }
+      0%, 34% { opacity: 0; }
+      40%, 78% { opacity: 1; }
       86%, 100% { opacity: 0; }
     }
 
@@ -436,13 +450,17 @@
       1.2% { background: linear-gradient(180deg, #e8f3ff 0%, #d8ebff 100%); transform: translateX(6px); }
     }
 
-    @keyframes handlerActivate {
+    @keyframes extractionActivate {
       0%, 48%, 100% { box-shadow: var(--card-shadow); }
-      58%, 76% { box-shadow: 0 0 0 5px rgba(226, 135, 5, 0.14), var(--card-shadow); }
+      56%, 78% { box-shadow: 0 0 0 5px rgba(226, 135, 5, 0.14), var(--card-shadow); }
     }
 
-    @keyframes loopSpin {
-      to { transform: rotate(360deg); }
+    @keyframes extractOneRecord {
+      0%, 100% { opacity: 0; transform: translate(0, -50%); }
+      1% { opacity: 1; transform: translate(0, -50%); }
+      5% { opacity: 1; transform: translate(118px, calc(-50% - 20px)); }
+      9% { opacity: 1; transform: translate(88px, calc(-50% + 22px)); }
+      13% { opacity: 0; transform: translate(164px, -50%); }
     }
 
 
@@ -638,8 +656,8 @@
     </section>
 
     <section class="tier tier-middle" aria-labelledby="middle-label">
-      <div id="middle-label" class="tier-label">中段：トリガ処理</div>
-      <div class="processing-stage" aria-label="trigger.newの15件をトリガハンドラが1件ずつ処理するアニメーション">
+      <div id="middle-label" class="tier-label">中段：trigger.new処理</div>
+      <div class="processing-stage" aria-label="trigger.newの15件を1件ずつ取り出してずらすアニメーション">
         <section class="trigger-new-box" aria-label="trigger.new 15件">
           <div class="processing-title"><span>trigger.new</span><span class="trigger-count">15 records</span></div>
           <div class="incoming-trigger-new" aria-hidden="true">
@@ -677,15 +695,25 @@
             <div class="trigger-record">15. 井上 直樹</div>
           </div>
         </section>
-        <section class="trigger-handler-box" aria-label="トリガハンドラ ループ処理">
-          <div class="processing-title"><span>Trigger Handler</span><span class="trigger-count">loop</span></div>
-          <div class="handler-steps">
-            <div class="handler-step">for (Contact c : Trigger.new)</div>
-            <div class="handler-step">1件ずつ検証</div>
-            <div class="handler-step">必要項目を整形</div>
-            <div class="handler-step">保存対象として確定</div>
+        <section class="extraction-box" aria-label="trigger.newから15件を1件ずつ取り出すアニメーション">
+          <div class="processing-title"><span>1件ずつ取り出し</span><span class="trigger-count">15</span></div>
+          <div class="extraction-stream" aria-hidden="true">
+            <div class="extracted-record">01. 高橋 一郎</div>
+            <div class="extracted-record">02. 佐藤 花子</div>
+            <div class="extracted-record">03. 鈴木 太郎</div>
+            <div class="extracted-record">04. 田中 美咲</div>
+            <div class="extracted-record">05. 伊藤 健</div>
+            <div class="extracted-record">06. 渡辺 葵</div>
+            <div class="extracted-record">07. 山本 大輔</div>
+            <div class="extracted-record">08. 中村 優子</div>
+            <div class="extracted-record">09. 小林 亮</div>
+            <div class="extracted-record">10. 加藤 真央</div>
+            <div class="extracted-record">11. 吉田 翔</div>
+            <div class="extracted-record">12. 山田 結衣</div>
+            <div class="extracted-record">13. 佐々木 蓮</div>
+            <div class="extracted-record">14. 松本 陽菜</div>
+            <div class="extracted-record">15. 井上 直樹</div>
           </div>
-          <div class="loop-indicator" aria-hidden="true"></div>
         </section>
       </div>
     </section>
