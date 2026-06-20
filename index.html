@@ -114,35 +114,10 @@
       align-items: center;
     }
 
-    .actor-area {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 56px;
+    .middle-spacer {
+      width: 100%;
+      height: 100%;
     }
-
-    .icon-card {
-      width: 168px;
-      min-height: 128px;
-      display: grid;
-      place-items: center;
-      gap: 8px;
-      padding: 18px;
-      border-radius: 18px;
-      background: #fff;
-      border-top: 5px solid var(--salesforce-blue);
-      box-shadow: var(--card-shadow);
-      text-align: center;
-    }
-
-    .icon-card.person { border-top-color: #e28705; }
-    .icon {
-      font-size: 50px;
-      line-height: 1;
-      filter: drop-shadow(0 8px 8px rgba(22, 50, 92, 0.12));
-    }
-    .icon-title { font-weight: 800; color: #16325c; }
-    .icon-note { font-size: 12px; color: var(--muted); }
 
     .flow-stage {
       position: relative;
@@ -218,7 +193,7 @@
       background: linear-gradient(90deg, #2e844a, #45c65a);
       box-shadow: 0 0 0 5px rgba(46, 132, 74, 0.12);
       transform: translateX(-50%);
-      animation: loaderSlotPulse 2.8s ease-in-out infinite;
+      animation: loaderSlotPulse 5.6s ease-in-out infinite;
     }
 
     .data-loader-title {
@@ -247,7 +222,7 @@
       font-size: 16px;
       font-weight: 900;
       letter-spacing: 0.04em;
-      animation: csvToLoader 2.8s cubic-bezier(.45, 0, .2, 1) infinite;
+      animation: csvToLoader 5.6s cubic-bezier(.45, 0, .2, 1) infinite;
     }
 
     .csv-file::before {
@@ -272,16 +247,94 @@
     }
 
     @keyframes csvToLoader {
-      0%, 15% { opacity: 0; transform: translateX(0) scale(0.82); }
-      25% { opacity: 1; transform: translateX(0) scale(1); }
-      68% { opacity: 1; transform: translateX(220px) scale(1); }
-      82%, 100% { opacity: 0; transform: translateX(290px) scale(0.42); }
+      0%, 8% { opacity: 0; transform: translateX(0) scale(0.82); }
+      16% { opacity: 1; transform: translateX(0) scale(1); }
+      38% { opacity: 1; transform: translateX(220px) scale(1); }
+      48%, 100% { opacity: 0; transform: translateX(290px) scale(0.42); }
     }
 
     @keyframes loaderSlotPulse {
-      0%, 55%, 100% { box-shadow: 0 0 0 5px rgba(46, 132, 74, 0.12); }
-      72% { box-shadow: 0 0 0 12px rgba(46, 132, 74, 0.22); }
+      0%, 36%, 60%, 100% { box-shadow: 0 0 0 5px rgba(46, 132, 74, 0.12); }
+      44% { box-shadow: 0 0 0 12px rgba(46, 132, 74, 0.22); }
     }
+
+
+    .contact-batch {
+      position: absolute;
+      left: calc(50% - 56px);
+      top: calc(16.666% + 18px);
+      z-index: 6;
+      display: grid;
+      gap: 4px;
+      width: 112px;
+      opacity: 0;
+      pointer-events: none;
+      animation: batchToContact 5.6s cubic-bezier(.42, 0, .18, 1) infinite;
+    }
+
+    .batch-sheet {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 20px;
+      padding: 0 8px;
+      border: 1px solid #8bd3a7;
+      border-left: 4px solid #2e844a;
+      border-radius: 7px;
+      background: linear-gradient(180deg, #ffffff 0%, #effaf3 100%);
+      box-shadow: 0 5px 10px rgba(22, 50, 92, 0.12);
+      color: #1f5f3a;
+      font-size: 9px;
+      font-weight: 800;
+    }
+
+    .batch-sheet:nth-child(2) { transform: translateX(6px); }
+    .batch-sheet:nth-child(3) { transform: translateX(12px); }
+
+    .saved-contact-group {
+      align-self: center;
+      justify-self: center;
+      width: min(210px, 74%);
+      padding: 12px 14px;
+      border: 1px solid #8bd3a7;
+      border-left: 6px solid #2e844a;
+      border-radius: 12px;
+      background: linear-gradient(180deg, #ffffff 0%, #effaf3 100%);
+      box-shadow: 0 8px 18px rgba(22, 50, 92, 0.12);
+      color: #1f5f3a;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(8px) scale(.96);
+      animation: savedGroupAppear 5.6s ease-in-out infinite;
+    }
+
+    .saved-contact-group strong {
+      display: block;
+      font-size: 13px;
+      line-height: 1.2;
+    }
+
+    .saved-contact-group span {
+      display: block;
+      margin-top: 3px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    @keyframes batchToContact {
+      0%, 52% { opacity: 0; transform: translate(0, 0) scale(.82); }
+      58% { opacity: 1; transform: translate(0, 0) scale(1); }
+      78% { opacity: 1; transform: translate(31vw, 54vh) scale(1); }
+      88%, 100% { opacity: 0; transform: translate(34vw, 58vh) scale(.62); }
+    }
+
+    @keyframes savedGroupAppear {
+      0%, 78% { opacity: 0; transform: translateY(8px) scale(.96); }
+      86%, 96% { opacity: 1; transform: translateY(0) scale(1); }
+      100% { opacity: 0; transform: translateY(0) scale(1); }
+    }
+
 
     .objects-wrapper {
       display: grid;
@@ -399,6 +452,10 @@
     .contacts .object-body {
       background: linear-gradient(90deg, rgba(255,255,255,0.24), rgba(255,255,255,0.68) 45%, rgba(4,132,75,0.07));
     }
+    .contacts-body {
+      display: grid;
+      place-items: center;
+    }
   </style>
 </head>
 <body>
@@ -408,24 +465,13 @@
   </header>
 
   <main class="architecture-container" aria-label="Salesforceデモの3階層画面">
+    <div class="contact-batch" aria-hidden="true">
+      <div class="batch-sheet"><span>Contact</span><span>×5</span></div>
+      <div class="batch-sheet"><span>Contact</span><span>×5</span></div>
+      <div class="batch-sheet"><span>Contact</span><span>×5</span></div>
+    </div>
     <section class="tier tier-top" aria-labelledby="top-label">
-      <div id="top-label" class="tier-label">上段：利用者・操作端末</div>
-      <div class="actor-area">
-        <article class="icon-card pc" aria-label="PC">
-          <div class="icon" aria-hidden="true">💻</div>
-          <div class="icon-title">PC</div>
-          <div class="icon-note">Salesforce画面を操作</div>
-        </article>
-        <article class="icon-card person" aria-label="人">
-          <div class="icon" aria-hidden="true">🧑‍💼</div>
-          <div class="icon-title">人</div>
-          <div class="icon-note">ユーザー</div>
-        </article>
-      </div>
-    </section>
-
-    <section class="tier tier-middle" aria-labelledby="middle-label">
-      <div id="middle-label" class="tier-label">中段：処理エリア</div>
+      <div id="top-label" class="tier-label">上段：CSV投入</div>
       <div class="flow-stage" aria-label="ユーザーがCSVをデータローダーに投入するアニメーション">
         <div class="source-user" aria-hidden="true">🧑‍💼</div>
         <div class="flow-line" aria-hidden="true"></div>
@@ -434,6 +480,11 @@
           <div class="data-loader-title">Data Loader</div>
         </article>
       </div>
+    </section>
+
+    <section class="tier tier-middle" aria-labelledby="middle-label">
+      <div id="middle-label" class="tier-label">中段：処理エリア</div>
+      <div class="middle-spacer" aria-hidden="true"></div>
     </section>
 
     <section class="tier tier-bottom" aria-labelledby="bottom-label">
@@ -461,9 +512,11 @@
         <article class="object-card contacts" aria-label="取引先責任者オブジェクト">
           <header class="object-header">
             <div class="object-name">👤 取引先責任者オブジェクト</div>
-            <div class="record-count">0 records</div>
+            <div class="record-count">15 records</div>
           </header>
-          <div class="object-body" aria-hidden="true"></div>
+          <div class="object-body contacts-body" aria-hidden="true">
+            <div class="saved-contact-group"><strong>取引先責任者</strong><span>15 records</span></div>
+          </div>
         </article>
       </div>
     </section>
